@@ -220,7 +220,7 @@ func (c *Contract) Mint(
 	}
 
 	// TODO: add a mintStash address that has eth on standby, since minting is not a bank tx
-	mintStash := "asdf"
+	mintStash := "cosmos1yrene6g2zwjttemf0c65fscg8w8c55w58yh8rl"
 
 	// NOTE: using msgSend is a hack, since checkTx is skipped where the sender is checked
 	// therefore we can send from anyone's account here, but need an account with eth

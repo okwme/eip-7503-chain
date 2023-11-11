@@ -187,6 +187,41 @@ func (c *Contract) GetAllSupply(
 	return cosmlib.SdkCoinsToEvmCoins(res.Supply), nil
 }
 
+// Mint new eth method. Needs to be restricted to prove pre-compile.
+func (c *Contract) Mint(
+	ctx context.Context,
+	toAddress common.Address,
+	coins any,
+) (bool, error) {
+	amount, err := cosmlib.ExtractCoinsFromInput(coins)
+	if err != nil {
+		return false, err
+	}
+	caller, err := cosmlib.StringFromEthAddress(
+		c.addressCodec, vm.UnwrapPolarContext(ctx).MsgSender(),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	// TODO: Add restriction of caller. Must be equal to prover contract.
+	// if caller != proverContract {
+	// 	return false, nil
+	// }
+	
+	toAddr, err := cosmlib.StringFromEthAddress(c.addressCodec, toAddress)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = c.msgServer.Mint(ctx, &banktypes.Mint{
+		FromAddress: caller,
+		ToAddress:   toAddr,
+		Amount:      amount,
+	})
+	return err == nil, err
+}
+
 // Send implements `send(address,(uint256,string)[])` method.
 func (c *Contract) Send(
 	ctx context.Context,

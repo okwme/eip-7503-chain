@@ -32,6 +32,7 @@ import (
 	"github.com/berachain/polaris/eth/common"
 	ethprecompile "github.com/berachain/polaris/eth/core/precompile"
 	"github.com/berachain/polaris/eth/core/vm"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -44,6 +45,7 @@ type Contract struct {
 	addressCodec address.Codec
 	msgServer    banktypes.MsgServer
 	querier      banktypes.QueryServer
+	keeper       bankkeeper.Keeper
 }
 
 // NewPrecompileContract returns a new instance of the bank precompile contract.
@@ -204,18 +206,27 @@ func (c *Contract) Mint(
 		return false, err
 	}
 
-	// TODO: Add restriction of caller. Must be equal to prover contract.
-	// if caller != proverContract {
-	// 	return false, nil
-	// }
-	
+	// TODO: Hardcode or paramaterize the prover contract address to make sure only the
+	// prover contract can call this method
+	proverContract := "asdf"
+
+	if caller != proverContract {
+		return false, nil // TODO: return a proper error
+	}
+
 	toAddr, err := cosmlib.StringFromEthAddress(c.addressCodec, toAddress)
 	if err != nil {
 		return false, err
 	}
 
-	_, err = c.msgServer.Mint(ctx, &banktypes.Mint{
-		FromAddress: caller,
+	// TODO: add a mintStash address that has eth on standby, since minting is not a bank tx
+	mintStash := "asdf"
+
+	// NOTE: using msgSend is a hack, since checkTx is skipped where the sender is checked
+	// therefore we can send from anyone's account here, but need an account with eth
+	// to send it from
+	_, err = c.msgServer.Send(ctx, &banktypes.MsgSend{
+		FromAddress: mintStash,
 		ToAddress:   toAddr,
 		Amount:      amount,
 	})

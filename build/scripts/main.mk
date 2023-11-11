@@ -19,7 +19,7 @@ build-linux-amd64:
 build-linux-arm64:
 	GOOS=linux GOARCH=arm64 LEDGER_ENABLED=false $(MAKE) build
 
-$(BUILD_TARGETS): forge-build sync $(OUT_DIR)/
+$(BUILD_TARGETS): forge-clean forge-build sync $(OUT_DIR)/
 	@echo "Building ${TESTAPP_DIR}"
 	@cd ${CURRENT_DIR}/$(TESTAPP_DIR) && go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
 
@@ -39,7 +39,7 @@ clean:
 #################
 
 forge-build: |
-	@forge build --extra-output-files bin --extra-output-files abi  --root $(CONTRACTS_DIR)
+	forge build --extra-output-files bin --extra-output-files abi --root $(CONTRACTS_DIR)
 
 forge-clean: |
 	@forge clean --root $(CONTRACTS_DIR)
@@ -122,7 +122,7 @@ endef
 ###############################################################################
 
 generate:
-	@$(MAKE) abigen-install moq-install mockery
+	@$(MAKE) abigen-install rlpgen-install moq-install mockery
 	@for module in $(MODULES); do \
 		echo "Running go generate in $$module"; \
 		(cd $$module && go generate ./...) || exit 1; \
@@ -131,6 +131,10 @@ generate:
 abigen-install:
 	@echo "--> Installing abigen"
 	@go install github.com/ethereum/go-ethereum/cmd/abigen@latest
+
+rlpgen-install:
+	@echo "--> Installing rlpgen"
+	@go install github.com/ethereum/go-ethereum/rlp/rlpgen@latest
 
 moq-install:
 	@echo "--> Installing moq"

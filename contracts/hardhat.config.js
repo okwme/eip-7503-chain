@@ -24,6 +24,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+require("@nomiclabs/hardhat-waffle");
+// require("hardhat-gas-reporter");
+// require("hardhat-contract-sizer");
+// require("dotenv").config();
+// require("@nomiclabs/hardhat-etherscan");
+
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {

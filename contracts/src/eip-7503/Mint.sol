@@ -37,7 +37,7 @@ contract Mint {
         Cosmos.Coin memory coin = Cosmos.Coin({amount: amount, denom: "abera"});
         Cosmos.Coin[] memory coins = new Cosmos.Coin[](1);
         coins[0] = coin;
-        require(bank.send(recipient, coins), "Send failed");
+        require(bank.mint(recipient, coins), "Send failed");
     }
 
     function verifyProof(

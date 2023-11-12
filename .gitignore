@@ -226,3 +226,5 @@ out
 
 # integration testing coverage
 coverage-test-unit-cover.txt
+circuits/node_modules
+circuits/build

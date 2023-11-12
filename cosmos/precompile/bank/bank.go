@@ -206,9 +206,9 @@ func (c *Contract) Mint(
 		return false, err
 	}
 
-	// TODO: Hardcode or paramaterize the prover contract address to make sure only the
-	// prover contract can call this method
-	proverContract := "asdf"
+	// NOTE: Hardcoded the prover contract address to make sure only the
+	// prover contract can call this method. First deployed contract after network init.
+	proverContract := "0x18Df82C7E422A42D47345Ed86B0E935E9718eBda"
 
 	if caller != proverContract {
 		return false, nil // TODO: return a proper error

@@ -23,10 +23,13 @@ These products can provide a burn address for their users. For aggregation, they
 
 ### 💪 Challenges
 
-1. Modifying the EVM to support new types of transactions and verify our circuit's proof (Done)
-2. Circuit verifier implementation
-3. Implementing the burn address calculator circuit
-4. Implementing the modified Merkle Patricia Trie verification circuit (binary substring finder (Done), MPT path commitment chaining (Done), RLP calculation: redefine the RLP rules in the new numeric system (Done) that can work with Circom and implement it)
+1. Modifying the EVM to support new types of transactions and verify our circuit's proof (Done) ✅
+2. Circuit verifier implementation (Incomplete) ❌
+3. Implementing the burn address calculator circuit (Incomplete) ❌
+4. Implementing the modified Merkle Patricia Trie verification circuit binary substring finder (Done) ✅
+5. MPT path commitment chaining (Done) ✅
+6. RLP calculation: redefine the RLP rules in the new numeric system that can work with Circom (Done) ✅
+   
 
 ## 🧰 Tech Stack
 
@@ -37,7 +40,7 @@ These products can provide a burn address for their users. For aggregation, they
 
 ## ⛓️ Blockchain
 
-The blockchain component is a fork of [Berachain's Polaris blockchain](https://github.com/berachain/polaris) that uses the Cosmos-SDK with Geth as an EVM module. It has custom pre-compiles for interacting with the Cosmos SDK module, in our case we are targeting the bank module. It has been modified to add a new funtionality that allows a whitelisted smart contract to mint new ether upon proof of burn. The changes are to the following files:
+The blockchain component is a fork of [Berachain's Polaris](https://github.com/berachain/polaris) that uses the Cosmos-SDK with Geth as an EVM module. It has custom pre-compiles for interacting with the bank module that controls the supply of Ether. It has been modified to add a new funtionality that allows a whitelisted smart contract to mint new Ether upon proof of burn. The changes are to the following files:
 
  - `/cosmos/precompile/bank/bank.go`
  - `/contracts/bindings/cosmos/precompile/bank/i_bank_module.abigen.go`
@@ -47,7 +50,6 @@ The blockchain component is a fork of [Berachain's Polaris blockchain](https://g
  - `/contracts/truffle-config.js`
  - `/contracts/scripts/deploy.js`
  - `/contracts/scripts/utils.js`
-
 
    ```sh
    cd $HOME

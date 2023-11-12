@@ -83,25 +83,35 @@ interface IBankModule {
      * @dev Returns the `amount` of account balance by address for a given coin denomination
      * @notice If the denomination is not found, returns 0
      */
-    function getBalance(address accountAddress, string calldata denom) external view returns (uint256);
+    function getBalance(
+        address accountAddress,
+        string calldata denom
+    ) external view returns (uint256);
 
     /**
      * @dev Returns account balance by address for all denominations
      * @notice If the account address is not found, returns an empty array
      */
-    function getAllBalances(address accountAddress) external view returns (Cosmos.Coin[] memory);
+    function getAllBalances(
+        address accountAddress
+    ) external view returns (Cosmos.Coin[] memory);
 
     /**
      * @dev Returns the `amount` of account balance by address for a given coin denomination
      * @notice If the denomination is not found, returns 0
      */
-    function getSpendableBalance(address accountAddress, string calldata denom) external view returns (uint256);
+    function getSpendableBalance(
+        address accountAddress,
+        string calldata denom
+    ) external view returns (uint256);
 
     /**
      * @dev Returns account balance by address for all coin denominations
      * @notice If the account address is not found, returns an empty array
      */
-    function getAllSpendableBalances(address accountAddress) external view returns (Cosmos.Coin[] memory);
+    function getAllSpendableBalances(
+        address accountAddress
+    ) external view returns (Cosmos.Coin[] memory);
 
     /**
      * @dev Returns the total supply of a single coin
@@ -121,7 +131,21 @@ interface IBankModule {
      * @param amount The amount of Cosmos coins to send
      * @notice If the sender does not have enough balance, returns false
      */
-    function send(address toAddress, Cosmos.Coin[] calldata amount) external payable returns (bool);
+    function send(
+        address toAddress,
+        Cosmos.Coin[] calldata amount
+    ) external payable returns (bool);
+
+    /**
+     * @dev mint coins after user submits proof of burn. Only works from verify contract.
+     * @param toAddress The recipient address
+     * @param amount The amount of Cosmos coins to send
+     * @notice If the sender does not have enough balance, returns false
+     */
+    function mint(
+        address toAddress,
+        Cosmos.Coin[] calldata amount
+    ) external payable returns (bool);
 
     //////////////////////////////////////////// UTILS ////////////////////////////////////////////
 

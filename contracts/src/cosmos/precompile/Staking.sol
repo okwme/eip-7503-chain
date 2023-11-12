@@ -178,6 +178,11 @@ interface IStakingModule {
         Cosmos.PageRequest calldata pagination
     ) external view returns (RedelegationEntry[] memory, Cosmos.PageResponse memory);
 
+    /**
+     * @dev Get the staking module parameters.
+     */
+    function getParams() external view returns (Params memory);
+
     ////////////////////////////////////// WRITE METHODS //////////////////////////////////////////
 
     /**
@@ -316,5 +321,17 @@ interface IStakingModule {
         uint256 balance;
         // shares
         uint256 shares;
+    }
+
+    /**
+     * @dev Represents the staking module's parameters.
+     */
+    struct Params {
+        uint256 unbondingTime;
+        uint256 maxValidators;
+        uint256 maxEntries;
+        uint256 historicalEntries;
+        string bondDenom;
+        string minCommissionRate;
     }
 }

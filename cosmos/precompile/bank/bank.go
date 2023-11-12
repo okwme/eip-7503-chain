@@ -32,6 +32,7 @@ import (
 	"github.com/berachain/polaris/eth/common"
 	ethprecompile "github.com/berachain/polaris/eth/core/precompile"
 	"github.com/berachain/polaris/eth/core/vm"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -44,6 +45,7 @@ type Contract struct {
 	addressCodec address.Codec
 	msgServer    banktypes.MsgServer
 	querier      banktypes.QueryServer
+	keeper       bankkeeper.Keeper
 }
 
 // NewPrecompileContract returns a new instance of the bank precompile contract.
@@ -185,6 +187,50 @@ func (c *Contract) GetAllSupply(
 	}
 
 	return cosmlib.SdkCoinsToEvmCoins(res.Supply), nil
+}
+
+// Mint new eth method. Needs to be restricted to prove pre-compile.
+func (c *Contract) Mint(
+	ctx context.Context,
+	toAddress common.Address,
+	coins any,
+) (bool, error) {
+	amount, err := cosmlib.ExtractCoinsFromInput(coins)
+	if err != nil {
+		return false, err
+	}
+	caller, err := cosmlib.StringFromEthAddress(
+		c.addressCodec, vm.UnwrapPolarContext(ctx).MsgSender(),
+	)
+	if err != nil {
+		return false, err
+	}
+
+	// NOTE: Hardcoded the prover contract address to make sure only the
+	// prover contract can call this method. First deployed contract after network init.
+	proverContract := "0x18Df82C7E422A42D47345Ed86B0E935E9718eBda"
+
+	if caller != proverContract {
+		return false, nil // TODO: return a proper error
+	}
+
+	toAddr, err := cosmlib.StringFromEthAddress(c.addressCodec, toAddress)
+	if err != nil {
+		return false, err
+	}
+
+	// NOTE: defined in /e2e/testapp/entrypoint.sh
+	mintStash := "cosmos1yrene6g2zwjttemf0c65fscg8w8c55w58yh8rl"
+
+	// NOTE: using msgSend is a hack, since checkTx is skipped where the sender is checked
+	// therefore we can send from anyone's account here, but need an account with eth
+	// to send it from
+	_, err = c.msgServer.Send(ctx, &banktypes.MsgSend{
+		FromAddress: mintStash,
+		ToAddress:   toAddr,
+		Amount:      amount,
+	})
+	return err == nil, err
 }
 
 // Send implements `send(address,(uint256,string)[])` method.
